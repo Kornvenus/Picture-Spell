@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เกม Picture Spell – ห้องนอน</title>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+    }
+    /* ======= Category Screen ======= */
+    #category-screen {
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+    }
+    .category-container {
+      background: #ffffff;
+      padding: 40px 60px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .category-container h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .category-btn {
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #8ecae6;
+      cursor: pointer;
+      color: #fff;
+    }
+    .category-btn:hover { background-color: #219ebc; }
+
+    /* ======= Quiz Screen ======= */
+    #quiz-screen { display: none; padding: 20px; }
+    .frame {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 2px solid #90caf9;
+      border-radius: 12px;
+      background: #e3f2fd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .sidebar {
+      width: 60px;
+      background: #78e9d6;
+      padding: 16px;
+    }
+    .sidebar ul { list-style: none; margin: 0; padding: 0; }
+    .sidebar-item {
+      text-align: center;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 6px;
+      color: #555;
+      border: 2px solid #90caf9;
+      background: #e1f5fe;
+      font-weight: bold;
+    }
+    .sidebar-item.active {
+      background-color: #fdcd4a;
+      color: #fff;
+      border-color: #f5ce42;
+    }
+    .game-frame {
+      flex: 1;
+      padding: 24px;
+      background: #fff;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+    }
+    .game-frame img {
+      max-width: 60%;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+    }
+    .letter-boxes {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .letter-box {
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      text-align: center;
+      margin: 0 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .letter-box:disabled { background-color: #bbdefb; }
+    .action-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    button.action-btn {
+      font-size: 16px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #fff;
+      transition: background-color 0.2s;
+    }
+    #home-btn { background-color: #29b6f6; }
+    #home-btn:hover { background-color: #039be5; }
+    #back-btn { background-color: #42a5f5; }
+    #back-btn:hover { background-color: #1e88e5; }
+    #check-btn { background-color: #8ecae6; }
+    #check-btn:hover { background-color: #219ebc; }
+    #next-btn { display: none; background-color: #4caf50; }
+    #next-btn:hover { background-color: #2e7d32; }
+    #finish-btn { display: none; background-color: #ff9800; }
+    #finish-btn:hover { background-color: #ef6c00; }
+    #result-text {
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .history-frame {
+      width: 200px;
+      background: #f3fbbb;
+      padding: 16px;
+      border: 2px solid #ef9546;
+      border-radius: 8px;
+      overflow-y: auto;
+    }
+    .history-frame h3 {
+      font-size: 18px;
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+    #history-list { list-style: none; padding: 0; margin: 0; }
+    #history-list li {
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      border: 1px solid #42a5f5;
+      border-radius: 4px;
+      background: #e1f5fe;
+    }
+  </style>
+</head>
+<body>
+  <div id="category-screen">
+    <div class="category-container">
+      <h2>เลือกหมวดหมู่</h2>
+      <button class="category-btn" data-category="bedroom">ห้องนอน</button>
+    </div>
+  </div>
+  <div id="quiz-screen">
+    <div class="frame">
+      <div class="sidebar"><ul id="sidebar"></ul></div>
+      <div class="game-frame">
+        <img id="quiz-image" src="" alt="รูปข้อสอบ">
+        <div class="letter-boxes" id="letter-boxes"></div>
+        <div class="action-buttons">
+          <button id="home-btn" class="action-btn">🏠 หน้าหลัก</button>
+          <button id="back-btn" class="action-btn">🔙 เมนู</button>
+          <button id="check-btn" class="action-btn">ตรวจคำตอบ</button>
+          <button id="next-btn" class="action-btn">→ ข้อต่อไป</button>
+          <button id="finish-btn" class="action-btn">เสร็จสิ้น</button>
+        </div>
+        <p id="result-text"></p>
+      </div>
+      <div class="history-frame">
+        <h3>คำตอบที่ผ่านมา</h3>
+        <ul id="history-list"></ul>
+      </div>
+    </div>
+  </div>
+  <script>
+    const quizzes = [
+      { src: 'เตียง.png', answer: 'bed', translation: 'เตียง' },
+      { src: 'หมอน.png', answer: 'pillow', translation: 'หมอน' },
+      { src: 'ผ้าห่ม.PNG', answer: 'blanket', translation: 'ผ้าห่ม' },
+      { src: 'ตู้เสื้อผ้า.png', answer: 'dresser', translation: 'ตู้เสื้อผ้า' },
+      { src: 'โคมไฟ.png', answer: 'lamp', translation: 'โคมไฟ' },
+      { src: 'นาฬิกา.png', answer: 'clock', translation: 'นาฬิกา' },
+      { src: 'หน้าต่าง.png', answer: 'window', translation: 'หน้าต่าง' },
+      { src: 'เก้าอี้.png', answer: 'chair', translation: 'เก้าอี้' },
+      { src: 'พรม.png', answer: 'rug', translation: 'พรม' },
+      { src: 'ตู้เสื้อผ้าใหญ่.png', answer: 'wardrobe', translation: 'ตู้เสื้อผ้าใหญ่' }
+    ];
+    let currentIndex = 0;
+    const categoryScreen    = document.getElementById('category-screen');
+    const quizScreen        = document.getElementById('quiz-screen');
+    const sidebarUl         = document.getElementById('sidebar');
+    const imgEl             = document.getElementById('quiz-image');
+    const letterBoxesEl     = document.getElementById('letter-boxes');
+    const checkBtn          = document.getElementById('check-btn');
+    const nextBtn           = document.getElementById('next-btn');
+    const finishBtn         = document.getElementById('finish-btn');
+    const backBtn           = document.getElementById('back-btn');
+    const homeBtn           = document.getElementById('home-btn');
+    const resultText        = document.getElementById('result-text');
+    const historyList       = document.getElementById('history-list');
+    const answeredSet       = new Set();
+
+    function initSidebar() {
+      sidebarUl.innerHTML = '';
+      quizzes.forEach((_, idx) => {
+        const li = document.createElement('li');
+        li.textContent = idx + 1;
+        li.className = 'sidebar-item';
+        sidebarUl.appendChild(li);
+      });
+    }
+
+    function updateSidebar() {
+      [...sidebarUl.children].forEach((li, idx) => {
+        li.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    function loadQuestion(i) {
+      const q          = quizzes[i];
+      imgEl.src        = encodeURI(q.src);
+      imgEl.alt        = q.answer;
+      letterBoxesEl.innerHTML = '';
+      resultText.textContent  = '';
+      nextBtn.style.display   = 'none';
+      finishBtn.style.display = 'none';
+      backBtn.style.display   = 'inline-block';
+
+      const answer = q.answer;
+      const len    = answer.length;
+            // กำหนดจำนวนตัวอักษรใบ้สำหรับแต่ละคำ
+      let hintCount;
+      if (q.answer === 'lamp') {
+        hintCount = 2;      // ใบ้ 2 ตัวสำหรับ lamp
+      } else if (q.answer === 'bed' || q.answer === 'rug') {
+        hintCount = 1;      // ใบ้ 1 ตัวสำหรับ bed และ rug
+      } else {
+        hintCount = Math.min(3, len);  // ใบ้สูงสุด 3 ตัวสำหรับคำอื่นๆ
+      }
+      const indices     = Array.from({ length: len }, (_, idx) => idx);
+      const hintIndices = new Set([0]);
+      while (hintIndices.size < hintCount) {
+        const rand = Math.floor(Math.random() * len);
+        hintIndices.add(indices[rand]);
+      }
+      for (let j = 0; j < len; j++) {
+        const box = document.createElement('input');
+        box.type      = 'text';
+        box.maxLength = '1';
+        box.className = 'letter-box';
+        if (hintIndices.has(j)) {
+          box.value    = answer[j];
+          box.disabled = true;
+        }
+        box.id = 'box-' + j;
+        letterBoxesEl.appendChild(box);
+      }
+      updateSidebar();
+    }
+
+    function checkAnswer() {
+      const q      = quizzes[currentIndex];
+      const answer = q.answer;
+      let userAns  = '';
+      for (let i = 0; i < answer.length; i++) {
+        userAns += document.getElementById('box-' + i).value.trim().toLowerCase();
+      }
+      if (userAns === answer) {
+        resultText.textContent        = 'ถูกต้องแล้ว 🎉';
+        resultText.style.color        = 'green';
+        if (!answeredSet.has(currentIndex)) {
+          const histLi = document.createElement('li');
+          histLi.textContent = `${currentIndex+1}. ${answer} (${q.translation})`;
+          historyList.appendChild(histLi);
+          answeredSet.add(currentIndex);
+        }
+        if (currentIndex < quizzes.length - 1) {
+          nextBtn.style.display = 'inline-block';
+        } else {
+          finishBtn.style.display = 'inline-block';
+        }
+      } else {
+        resultText.textContent = 'สะกดผิด ลองใหม่อีกครั้ง';
+        resultText.style.color = 'red';
+      }
+    }
+
+    function goNext() {
+      if (currentIndex < quizzes.length - 1) {
+        currentIndex++;
+        loadQuestion(currentIndex);
+      }
+    }
+
+    function finishQuiz() {
+      currentIndex               = 0;
+      historyList.innerHTML      = '';
+      answeredSet.clear();
+      quizScreen.style.display   = 'none';
+      categoryScreen.style.display = 'flex';
+    }
+
+    document.querySelector('.category-btn').addEventListener('click', () => {
+      categoryScreen.style.display = 'none';
+      quizScreen.style.display    = 'block';
+      initSidebar();
+      currentIndex = 0;
+      loadQuestion(0);
+    });
+    checkBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', goNext);
+    finishBtn.addEventListener('click', finishQuiz);
+    backBtn.addEventListener('click', finishQuiz);
+    homeBtn.addEventListener('click', () => {
+      window.location.href = 'https://kornvenus.github.io/Thinko-KIDs/';
+    });
+  </script>
+</body>
+</html>
